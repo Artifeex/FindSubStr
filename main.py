@@ -175,7 +175,7 @@ def print_main_menu():
     print('7) Сгенерировать повторяющийся шаблон')
     print('8) Исполнить алгоритм для заданных слов')
     print('9) Вывести текст и шаблон поиска')
-    print('0) Выход')
+    print('0) К экспериментам')
 
 
 def main():
@@ -186,8 +186,7 @@ def main():
     text = ''
     pattern = ''
     print_main_menu()
-
-    while False:
+    while True:
         choice = int(input('Ваш выбор:'))
         if choice == 1:
             count_letters = int(input('Введите число букв в алфавите: '))
@@ -219,26 +218,33 @@ def main():
             pattern = gen_repeated(k, word)
             print('Повторяющийся шаблон успешно сгенерирован')
         elif choice == 8:
-            start_time = time.time()
+            start_time = time.time_ns()
             naive_string_matcher(text, pattern)
-            end_time = time.time()
+            end_time = time.time_ns()
             T1 = end_time - start_time
-            print('Время работы наивного {}'.format(T1))
-            start_time = time.time()
+            print('Время работы наивного {}(наносекунд)'.format(T1))
+            start_time = time.time_ns()
             SFT_KMP(text, pattern)
-            end_time = time.time()
+            end_time = time.time_ns()
             T2 = end_time - start_time
-            print('Время работы Кнута-Морриса-Пратта {}'.format(T2))
+            print('Время работы Кнута-Морриса-Пратта {}(наносекунд)'.format(T2))
         elif choice == 9:
             print('Текст: ' + text)
             print('Шаблон: ' + pattern)
         elif choice == 0:
-            print('К эспериментам')
             break
         else:
             print('Нет такой команды')
+    choice = int(input('Выберите эксперимент(1-3): '))
+    if choice == 1:
+        first_experiment()
+    elif choice == 2:
+        second_experiment()
+    elif choice == 3:
+        third_experiment()
+    else:
+        print('Нет такого эксперимента!')
 
-    first_experiment()
 
 if __name__ == '__main__':
     main()
