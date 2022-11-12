@@ -42,10 +42,6 @@ def KMP(pattern):
         elif j == 0:
             result[i] = 0
             i += 1
-        # здесь мы добавили очередной элемент в префикс и суффикс и получилось так, что они не совпали. Нам не подошел префикс
-        # Значит, надо взять
-        # префикс и суффикс поменьше, но которые так же совпадают. А информация о таком хранится как раз в массиве,
-        # который мы заполняем
         else:
             j = result[j - 1] # берем длину меньшего префикс-суффикса
     return result
@@ -70,8 +66,6 @@ def SFT_KMP(text, pattern):
         elif l == 0:
             i += 1
         else:
-            # у нас не совпал символ, но вместо того, чтобы начать все с нуля проверять всю рамку
-            # мы можем начать проверять с более выгодной позиции и быть уверенными,  что ничего не потеряли
             l = f_pattern[l - 1]
     return result
 
@@ -91,21 +85,22 @@ def gen_repeated(k, word):
 
 
 def first_experiment():
-    k_array = np.array(list(range(1, 1001, 10)))
-    T1_array = np.empty(100)
-    T2_array = np.empty(100)
+    experiment_range = 101
+    k_array = np.array(list(range(1, experiment_range, 10)))
+    T1_array = np.empty(experiment_range // 10)
+    T2_array = np.empty(experiment_range // 10)
     i = 0
-    for k in range(1, 1001, 10):
+    for k in range(1, experiment_range, 10):
         print(k)
         text = 'ab' * 1000 * k
-        pattern = 'ab' * k
-        start_time = time.time()
-        #naive_string_matcher(text, pattern)
-        end_time = time.time()
+        pattern = 'ab'* k
+        start_time = time.time_ns()
+        naive_string_matcher(text, pattern)
+        end_time = time.time_ns()
         T1_array[i] = end_time - start_time
-        start_time = time.time()
+        start_time = time.time_ns()
         SFT_KMP(text, pattern)
-        end_time = time.time()
+        end_time = time.time_ns()
         T2_array[i] = end_time - start_time
         i += 1
     plt.plot(k_array, T1_array, label=r'$T_1(k) - Наивный$')
@@ -117,54 +112,54 @@ def first_experiment():
 
 
 def second_experiment():
-    m_array = np.array(list(range(1, 10**6, 10**4)))
-    T1_array = np.array(list(range(1, 10**6, 10**4)))
-    T2_array = np.array(list(range(1, 10**6, 10**4)))
+    m_array = np.array(list(range(1, 10**5 * 4, 10**4)))
+    T1_array = np.array(list(range(1, 10**5 * 4, 10**4)))
+    T2_array = np.array(list(range(1, 10**5 * 4, 10**4)))
     alphabet = 'ab'
-    pattern = 'a'
     i = 0
-    text = gen_normal_word(10 ** 6 + 1, alphabet)
-    for m in range(1, 10**6, 10**4):
+    text = gen_normal_word(10**5 * 4, alphabet)
+    for m in range(1, 10**5 * 4, 10**4):
         pattern = 'a' * m
-        start_time = time.time()
-        #naive_string_matcher(text, pattern)
-        end_time = time.time()
-        T1_array[i] = end_time - start_time
-        start_time = time.time()
+        print(m)
+        start_time = time.time_ns()
+        naive_string_matcher(text, pattern)
+        end_time = time.time_ns()
+        T1_array[i] = (end_time - start_time)
+        start_time = time.time_ns()
         SFT_KMP(text, pattern)
-        end_time = time.time()
-        T2_array[i] = end_time - start_time
+        end_time = time.time_ns()
+        T2_array[i] = (end_time - start_time)
         i += 1
-    plt.plot(m_array, T1_array, label=r'$T_1(k) - Наивный$')
-    plt.plot(m_array, T2_array, label=r'$T_2(k) - KMP$')
-    plt.xlabel(r'$k$', fontsize=14)
-    plt.ylabel(r'$T(k)$', fontsize=14)
+    plt.plot(m_array, T1_array, label=r'$T_1(m) - Наивный$')
+    plt.plot(m_array, T2_array, label=r'$T_2(m) - KMP$')
+    plt.xlabel(r'$m$', fontsize=14)
+    plt.ylabel(r'$T(m)$', fontsize=14)
     plt.legend(loc='best', fontsize=12)
     plt.show()
 
 
 def third_experiment():
     pattern = 'aaaaa'
-    h_array = np.array(list(range(1, 10**6 + 1, 10**4)))
-    T1_array = np.array(list(range(1, 10**6 + 1, 10**4)))
-    T2_array = np.array(list(range(1, 10**6 + 1, 10**4)))
+    h_array = np.array(list(range(1, 10**5 * 3, 10**4)))
+    T1_array = np.array(list(range(1, 10**5 * 3, 10**4)))
+    T2_array = np.array(list(range(1, 10**5 * 3, 10**4)))
     i = 0
-    for h in range(1,10**6 + 1, 10**4):
+    for h in range(1, 10**5 * 3, 10**4):
         print(h)
         text = 'aaaaab' * h
-        start_time = time.time()
+        start_time = time.time_ns()
         naive_string_matcher(text, pattern)
-        end_time = time.time()
-        T1_array[i] = end_time - start_time
-        start_time = time.time()
+        end_time = time.time_ns()
+        T1_array[i] = (end_time - start_time)
+        start_time = time.time_ns()
         SFT_KMP(text, pattern)
-        end_time = time.time()
-        T2_array[i] = end_time - start_time
+        end_time = time.time_ns()
+        T2_array[i] = (end_time - start_time)
         i += 1
-    plt.plot(h_array, T1_array, label=r'$T_1(k) - Наивный$')
-    plt.plot(h_array, T2_array, label=r'$T_2(k) - KMP$')
-    plt.xlabel(r'$k$', fontsize=14)
-    plt.ylabel(r'$T(k)$', fontsize=14)
+    plt.plot(h_array, T1_array, label=r'$T_1(h) - Наивный$')
+    plt.plot(h_array, T2_array, label=r'$T_2(h) - KMP$')
+    plt.xlabel(r'$h$', fontsize=14)
+    plt.ylabel(r'$T(h)$', fontsize=14)
     plt.legend(loc='best', fontsize=12)
     plt.show()
 
@@ -243,7 +238,7 @@ def main():
         else:
             print('Нет такой команды')
 
-    third_experiment()
+    first_experiment()
 
 if __name__ == '__main__':
     main()
